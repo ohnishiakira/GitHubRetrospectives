@@ -1,0 +1,17 @@
+/*
+  Localizable.strings
+  GitHubRetrospectives
+
+  Created by Akira Ohnishi on 2022/08/15.
+
+*/
+
+"app.title" = "Show my GitHub activities";
+
+"form.sinceLabel" = "Since :";
+"form.beforeLabel" = "Before :";
+"form.button" = "Start";
+
+"pat.form.title" = "Add GitHub Personal Access Token";
+"pat.form.description" = "Require repo & notifications scopes";
+"pat.form.button" = "Save";
