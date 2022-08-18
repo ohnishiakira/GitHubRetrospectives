@@ -5,7 +5,6 @@
 //  Created by Akira Ohnishi on 2022/08/04.
 //
 
-import Combine
 import UIKit
 
 struct TableRow {
@@ -22,7 +21,6 @@ struct TableRow {
     }
 }
 
-
 // reason count
 typealias Reasons = TableRow
 
@@ -32,8 +30,8 @@ class SummaryViewController: UIViewController {
     let parameters: FetchParameters
 
     let tableView = UITableView()
+    let indicator = UIActivityIndicatorView(style: .medium)
 
-    var cancellables = Set<AnyCancellable>()
     var rows: [TableRow] = []
 
     init(parameters: FetchParameters) {
@@ -51,16 +49,32 @@ class SummaryViewController: UIViewController {
 
         view.backgroundColor = .white
 
-        configure()
+        configureLoadingView()
+        configureTableView()
         configureStreams()
     }
 
     func configureStreams() {
+        tableView.isHidden = true
+        indicator.isHidden = false
+        indicator.startAnimating()
+
         useCase.delegate = self
-        useCase.fetch(parameters: parameters)
+        useCase.fetchStart(parameters: parameters)
     }
 
-    func configure() {
+    func configureLoadingView() {
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(indicator)
+
+        NSLayoutConstraint.activate([
+            indicator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            indicator.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+        ])
+    }
+
+    func configureTableView() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
@@ -120,12 +134,15 @@ extension SummaryViewController: FetchNotificationsUseCaseDelegate {
             TableRow(reason: tuple.key, notifications: tuple.value, index: index)
         }
 
+        indicator.stopAnimating()
+        indicator.isHidden = true
+        tableView.isHidden = false
         tableView.reloadData()
     }
 
     func onAuthenticationRequired() {
         let vc = AddTokenViewController { [self] in
-            useCase.fetch(parameters: parameters)
+            useCase.fetchStart(parameters: parameters)
         }
 
         present(vc, animated: true)

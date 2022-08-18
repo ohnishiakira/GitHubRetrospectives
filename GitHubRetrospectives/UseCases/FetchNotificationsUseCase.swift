@@ -34,7 +34,12 @@ class FetchNotificationsUseCase {
 
     weak var delegate: FetchNotificationsUseCaseDelegate?
 
-    func fetch(parameters: FetchParameters, pagination: Pagination = .init(perPage: 50, page: 1)) {
+    func fetchStart(parameters: FetchParameters) {
+        notifications = []
+        fetch(parameters: parameters, pagination: .init(perPage: 50, page: 1))
+    }
+
+    private func fetch(parameters: FetchParameters, pagination: Pagination) {
         let request = NotificationsRequest(since: parameters.since, before: parameters.before,
                                            perPage: pagination.perPage, page: pagination.page)
 
