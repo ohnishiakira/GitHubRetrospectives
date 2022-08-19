@@ -15,3 +15,5 @@
 "pat.form.title" = "Add GitHub Personal Access Token";
 "pat.form.description" = "Require repo & notifications scopes";
 "pat.form.button" = "Save";
+
+"summary.retry.button" = "Retry";

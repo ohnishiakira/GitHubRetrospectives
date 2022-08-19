@@ -24,6 +24,7 @@ struct Pagination {
 
 protocol FetchNotificationsUseCaseDelegate: AnyObject {
     func onFetched(notifications: [Notification])
+    func onFetchFailed(error: Error)
     func onAuthenticationRequired()
 }
 
@@ -52,6 +53,8 @@ class FetchNotificationsUseCase {
                 case .failure(let error):
                     if case .requireAuthentication = error as? GitHubError {
                         self.delegate?.onAuthenticationRequired()
+                    } else {
+                        self.delegate?.onFetchFailed(error: error)
                     }
                 }
             } receiveValue: {

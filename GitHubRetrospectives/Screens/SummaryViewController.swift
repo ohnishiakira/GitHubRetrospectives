@@ -31,6 +31,7 @@ class SummaryViewController: UIViewController {
 
     let tableView = UITableView()
     let indicator = UIActivityIndicatorView(style: .medium)
+    var errorStack: UIStackView?
 
     var rows: [TableRow] = []
 
@@ -148,7 +149,44 @@ extension SummaryViewController: FetchNotificationsUseCaseDelegate {
         present(vc, animated: true)
     }
 
-    func onNetworkErrorOccuered() {
-        // retry
+    func onFetchFailed(error: Error) {
+        indicator.stopAnimating()
+        indicator.isHidden = true
+        tableView.isHidden = true
+
+        let title = UILabel()
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.numberOfLines = 0
+        title.text = "Error: \(error.localizedDescription)"
+
+        let retryButton = UIButton()
+        retryButton.translatesAutoresizingMaskIntoConstraints = false
+        retryButton.setTitleColor(.black, for: .normal)
+        retryButton.setTitle("summary.retry.button".t, for: .normal)
+        retryButton.addTarget(self, action: #selector(onRetryButtonTap), for: .touchUpInside)
+
+        let stack = UIStackView(arrangedSubviews: [title, retryButton])
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.spacing = 32
+
+        view.addSubview(stack)
+
+        NSLayoutConstraint.activate([
+            stack.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            stack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+        ])
+
+        errorStack = stack
+    }
+
+    @objc func onRetryButtonTap() {
+        indicator.startAnimating()
+        indicator.isHidden = false
+
+        errorStack?.removeFromSuperview()
+
+        useCase.fetchStart(parameters: parameters)
     }
 }
