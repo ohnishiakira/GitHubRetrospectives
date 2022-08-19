@@ -10,14 +10,14 @@ import UIKit
 class DetailViewController: UIViewController {
     let tableView = UITableView()
 
-    let notifications: [Notification]
+    let tableRow: TableRow
     let texts: [String]
 
-    init(notifications: [Notification]) {
-        self.notifications = notifications
+    init(tableRow: TableRow) {
+        self.tableRow = tableRow
 
-        texts = notifications.map {
-            "[\($0.repository.fullName)][\($0.subject.type)] \($0.subject.title) \($0.updatedAt)"
+        texts = tableRow.notifications.map {
+            "[\($0.repository.fullName)][\($0.subject.type)]\n\($0.subject.title)\n\($0.updatedAt)"
         }
 
         super.init(nibName: nil, bundle: nil)
@@ -31,6 +31,8 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
 
         configure()
+
+        navigationItem.title = tableRow.text
     }
 
     func configure() {
@@ -55,7 +57,7 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        notifications.count
+        texts.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

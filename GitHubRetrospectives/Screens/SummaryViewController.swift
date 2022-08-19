@@ -117,8 +117,8 @@ extension SummaryViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let notifications = rows[indexPath.row].notifications
-        let vc = DetailViewController(notifications: notifications)
+        let row = rows[indexPath.row]
+        let vc = DetailViewController(tableRow: row)
 
         navigationController?.pushViewController(vc, animated: true)
 
